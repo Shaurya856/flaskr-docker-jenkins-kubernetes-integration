@@ -24,7 +24,7 @@ default Git version is the main branch. ::
 Create a virtualenv and activate it::
 
     $ python3 -m venv .venv
-    $ . .venv/bin/activate
+    $ source .venv/bin/activate
 
 Or on Windows cmd::
 
@@ -47,6 +47,7 @@ Run
 
 .. code-block:: text
 
+    $ source venv/bin/activate
     $ flask --app flaskr init-db
     $ flask --app flaskr run --debug
 

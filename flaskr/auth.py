@@ -1,4 +1,5 @@
 import functools
+import hashlib
 
 from flask import Blueprint
 from flask import flash
@@ -61,7 +62,9 @@ def register():
 
         if error is None:
             try:
-                user = User(username=username, password=password)  # Store password directly without hashing
+                # Hash the password using SHA256
+                hashed_password = hashlib.sha256(password.encode()).hexdigest()
+                user = User(username=username, password=hashed_password)
                 db = get_db()
                 db.add(user)
                 db.commit()
@@ -91,8 +94,11 @@ def login():
 
         if user is None:
             error = "Incorrect username."
-        elif user.password != password:  # Direct password comparison
-            error = "Incorrect password."
+        else:
+            # Hash the entered password and compare
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
+            if user.password != hashed_password:
+                error = "Incorrect password."
 
         if error is None:
             # store the user id in a new session and return to the index

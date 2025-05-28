@@ -12,9 +12,17 @@ def create_app(test_config=None):
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY=os.getenv('SECRET_KEY', 'dev'),
-        # Configure PostgreSQL
-        SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/postgres'),
+        # Configure PostgreSQL with session pooler
+        SQLALCHEMY_DATABASE_URI=os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:6432/postgres'),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        # Session pooler configuration
+        SQLALCHEMY_ENGINE_OPTIONS={
+            'pool_size': int(os.getenv('DB_POOL_SIZE', 10)),
+            'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', 20)),
+            'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', 30)),
+            'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', 1800)),
+            'pool_pre_ping': True,
+        }
     )
 
     if test_config is None:
